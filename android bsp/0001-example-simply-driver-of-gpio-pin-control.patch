@@ -1,0 +1,157 @@
+From eec050df24e3340ef7cc07e55b8eec0ddceebb69 Mon Sep 17 00:00:00 2001
+From: ting <ting@gmail.com>
+Date: Thu, 8 Apr 2021 21:42:06 +0800
+Subject: [PATCH] example simply driver of gpio pin control
+
+---
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts |  10 ++
+ drivers/misc/Makefile                        |   1 +
+ drivers/misc/ec25pin.c                       | 105 +++++++++++++++++++
+ 3 files changed, 116 insertions(+)
+ create mode 100644 drivers/misc/ec25pin.c
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 5669a631b9df..ecff2b09c199 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -290,6 +290,16 @@
+ 				    100>;
+ 		default-brightness-level = <80>;
+ 	};
++
++	ec25pin: ec25pin {
++		compatible = "ec25pin";
++		status = "okay";
++		ec25-4g-pwr-en-gpios = <&pca9555 12 (GPIO_ACTIVE_HIGH|GPIO_PULL_UP)>;
++		ec25-4g-reset-gpios    = <&gpio1 13 GPIO_ACTIVE_HIGH>;
++		ec25-4g-pwrkey-n-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
++		ec25-4g-status-gpios   = <&gpio1 8 GPIO_ACTIVE_HIGH>;
++	};
++
+ };
+ 
+ &aud2htx {
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 4f65afa3120b..0dfff9ba5ea4 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -61,3 +61,4 @@ obj-$(CONFIG_HABANA_AI)		+= habanalabs/
+ obj-$(CONFIG_XILINX_SDFEC)	+= xilinx_sdfec.o
+ obj-$(CONFIG_UID_SYS_STATS)	+= uid_sys_stats.o
+ obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
++obj-y						+= ec25pin.o
+diff --git a/drivers/misc/ec25pin.c b/drivers/misc/ec25pin.c
+new file mode 100644
+index 000000000000..9bc478bfb600
+--- /dev/null
++++ b/drivers/misc/ec25pin.c
+@@ -0,0 +1,105 @@
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/of_gpio.h>
++
++static int ec25pin_probe(struct platform_device *);
++static int ec25pin_remove(struct platform_device *);
++
++static const struct of_device_id my_of_match[] = {
++    { .compatible = "ec25pin", },
++    {},
++};
++MODULE_DEVICE_TABLE(of, my_of_match);
++
++static struct platform_driver ec25pin_driver = {
++    .probe      = ec25pin_probe,
++    .remove     = ec25pin_remove,
++    .driver     = {
++        .name   = "ec25pin-driver",
++        .of_match_table = my_of_match,
++    },
++};
++module_platform_driver(ec25pin_driver);
++
++bool ec25pinl_gpio_set_value(int gpio, int value) {
++	gpio_set_value(gpio, value);
++	pr_info("%s: gpio %d set value %d\n", __func__, gpio, value);
++	usleep_range(1000, 1100);
++	pr_info("%s: gpio %d get value %d\n", __func__, gpio, gpio_get_value(gpio));
++	gpio_free(gpio);
++	return true;
++}
++
++static int ec25pin_probe(struct platform_device *pdev) {
++	dev_info(&pdev->dev, "%s ec25pin_probe enter\n", __func__);
++
++	struct device_node *np = pdev->dev.of_node;
++	int ec25_reset_pin, ec25_pwrkey_n_pin, ec25_status_pin, retval;
++
++	if (!np)
++		return -ENODEV;
++
++	// EC25 LTE 4G pins
++	// - reset pin
++	ec25_reset_pin = of_get_named_gpio(np, "ec25-4g-reset-gpios", 0);
++	if (!gpio_is_valid(ec25_reset_pin))
++	   dev_err(&pdev->dev, "ec25_reset_pin isn't available");
++	else {
++	   retval = devm_gpio_request_one(&pdev->dev, ec25_reset_pin, GPIOF_OUT_INIT_LOW, "ec25_reset_pin");
++	   if (retval < 0) {
++		   dev_err(&pdev->dev, "Failed to set ec25_reset_pin, retval=%d\n", retval);
++	   }
++	}
++	dev_info(&pdev->dev, "%s: ec25_reset_pin=%d\n", __func__, ec25_reset_pin);
++
++	// - pwrkey_n pin
++	ec25_pwrkey_n_pin = of_get_named_gpio(np, "ec25-4g-pwrkey-n-gpios", 0);
++	if (!gpio_is_valid(ec25_pwrkey_n_pin))
++	   dev_err(&pdev->dev, "ec25_pwrkey_n_pin isn't available");
++	else {
++	   retval = devm_gpio_request_one(&pdev->dev, ec25_pwrkey_n_pin, GPIOF_OUT_INIT_HIGH, "ec25_pwrkey_n_pin");
++	   if (retval < 0) {
++		   dev_err(&pdev->dev, "Failed to set ec25_pwrkey_n_pin, retval=%d\n", retval);
++	   }
++	}
++	dev_info(&pdev->dev, "%s: ec25_pwrkey_n_pin=%d\n", __func__, ec25_pwrkey_n_pin);
++
++	// - 4g_status pin
++	ec25_status_pin = of_get_named_gpio(np, "ec25-4g-status-gpios", 0);
++	if (!gpio_is_valid(ec25_status_pin))
++	   dev_err(&pdev->dev, "ec25_status_pin isn't available");
++	else {
++	   retval = devm_gpio_request_one(&pdev->dev, ec25_status_pin, GPIOF_DIR_IN | GPIOF_INIT_HIGH, "ec25_status_pin");
++	   if (retval < 0) {
++		   dev_err(&pdev->dev, "Failed to set ec25_status_pin, retval=%d\n", retval);
++	   }
++	}
++	dev_info(&pdev->dev, "%s: ec25_status_pin=%d\n", __func__, ec25_status_pin);
++
++	// power sequence
++	ec25pinl_gpio_set_value(ec25_reset_pin, 1);
++	ec25pinl_gpio_set_value(ec25_reset_pin, 0);
++
++	ec25pinl_gpio_set_value(ec25_pwrkey_n_pin, 1);
++	ec25pinl_gpio_set_value(ec25_pwrkey_n_pin, 0);
++	msleep(30);
++	ec25pinl_gpio_set_value(ec25_pwrkey_n_pin, 1);
++	msleep(500);
++	ec25pinl_gpio_set_value(ec25_pwrkey_n_pin, 0);
++
++	msleep(300);
++	ec25pinl_gpio_set_value(ec25_status_pin, 1);
++
++	dev_info(&pdev->dev, "%s ec25pin_probe exit\n", __func__);
++	return 0;
++}
++
++static int ec25pin_remove(struct platform_device *pdev) {
++	return 0;
++}
+\ No newline at end of file
+-- 
+2.17.1
+
