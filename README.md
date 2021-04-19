@@ -35,13 +35,20 @@
 
 #### Google API
 
-- Googla Login
-- Google Map
-- Google Analysis
+- [Googla Login](https://developers.google.com/identity/sign-in/web/sign-in), [OAuth 2.0](https://developers.google.com/identity/protocols/oauth2)
+- [Google Map](https://developers.google.com/maps?hl=zh-tw)
+- [Google Analysis](https://developers.google.com/analytics/devguides/reporting/core/v4)
 
 </br>
 
 #### Messaging
 
-- GCM, FCM
-- MQTT
+- [GCM](https://developers.google.com/cloud-messaging), [FCM](https://firebase.google.com/docs/cloud-messaging)
+- [MQTT](https://mqtt.org/)
+
+
+</br>
+
+#### Image Loader
+
+- [Glide](https://github.com/bumptech/glide)
