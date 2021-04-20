@@ -14,8 +14,8 @@
 - [AsyncTask](https://www.google.com/url?client=internal-element-cse&cx=000521750095050289010:zpcpi1ea4s8&q=https://developer.android.com/reference/android/os/AsyncTask&sa=U&ved=2ahUKEwiF0L7F8f3vAhW9xosBHfY7DaEQFjAAegQIAhAB&usg=AOvVaw1kT9NqmBAtdKl_ofOEpNim)
 - [java.util.concurrent](https://developer.android.com/reference/java/util/concurrent/package-summary)
 - [RxJava](https://github.com/ReactiveX/RxJava)
-- [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
-- [Corutine](https://developer.android.com/kotlin/coroutines)
+- [Jetpack WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
+- [Kotlin Coroutines](https://developer.android.com/kotlin/coroutines)
 
 
 </br>
