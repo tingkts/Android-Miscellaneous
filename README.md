@@ -20,10 +20,24 @@
 
 </br>
 
+#### RxJava extension
+
+- [RxPaparazzo](https://github.com/miguelbcr/RxPaparazzo)
+
+
+</br>
+
 #### Android UI
 
 - [Material Design](https://developer.android.com/guide/topics/ui/look-and-feel)
 
+
+
+</br>
+
+#### View binding
+- [ButterKnife](https://github.com/JakeWharton/butterknife)
+- [Jetpack View Binding](https://developer.android.com/topic/libraries/view-binding)
 
 </br>
 
