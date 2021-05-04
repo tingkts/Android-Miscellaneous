@@ -17,6 +17,8 @@
 - [Jetpack WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
 - [Kotlin Coroutines](https://developer.android.com/kotlin/coroutines)
 
+&nbsp; &nbsp; ∗ [RxJava](https://github.com/ReactiveX/RxJava), [Kotlin Coroutines](https://developer.android.com/kotlin/coroutines) are suitable for the switching between UI/Main thread and worker threads,
+</br>&nbsp; &nbsp; &nbsp;the code will be concise and flexible switch.
 
 </br>
 
