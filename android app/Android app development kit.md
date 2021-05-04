@@ -20,6 +20,9 @@
 &nbsp; &nbsp; ∗ [RxJava](https://github.com/ReactiveX/RxJava), [Kotlin Coroutines](https://developer.android.com/kotlin/coroutines) are suitable for the switching between UI/Main thread and worker threads,
 </br> &nbsp; &nbsp; &nbsp; the code will be concise and flexible to switch.
 
+
+&nbsp; &nbsp; ∗ [RxJava](https://github.com/ReactiveX/RxJava) can be combined with [Retrofit](https://square.github.io/retrofit/) to query remote HTTP server elegantly.
+
 </br>
 
 #### RxJava extension
