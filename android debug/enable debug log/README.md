@@ -31,7 +31,7 @@
 
 ◤ &nbsp; kernel
 
-  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [Modify kernel log level to 8 in uboot](./ref/0001-Modify-log-level-to-8-uboot-pass-to-kernel)
+  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [Modify kernel log level to 8 in uboot](./ref/0001-Modify-log-level-to-8-uboot-pass-to-kernel.patch)
 
   &nbsp;&nbsp;&nbsp;&nbsp; ╴ [Modify kernel printk CONSOLE_LOGLEVEL_DEFAULT](./ref/kernel.printk.printk.c.diff)
 
