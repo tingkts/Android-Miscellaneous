@@ -1,0 +1,43 @@
+From 9c49547217c7516ab5da2da9152dde25cf6a379c Mon Sep 17 00:00:00 2001
+From: tingsung <tingsung@msi.com>
+Date: Mon, 7 Jun 2021 09:37:07 +0800
+Subject: [PATCH] DON'T MERGE: debug log only
+
+---
+ build/Android.bp | 2 ++
+ osi/Android.bp   | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/build/Android.bp b/build/Android.bp
+index cde9a361f..80d2bcd84 100644
+--- a/build/Android.bp
++++ b/build/Android.bp
+@@ -21,6 +21,8 @@ fluoride_defaults {
+         "-Wall",
+         "-Wextra",
+         "-Werror",
++        "-Wno-macro-redefined",
++        "-DLOG_NDEBUG=0",
+     ],
+     target: {
+         darwin: {
+diff --git a/osi/Android.bp b/osi/Android.bp
+index e6c95d0be..e9a0f8399 100644
+--- a/osi/Android.bp
++++ b/osi/Android.bp
+@@ -6,7 +6,11 @@ cc_defaults {
+         "system/bt/internal_include",
+         "system/bt/utils/include",
+         "system/bt/stack/include",
+-    ]
++    ],
++    cflags: [
++        "-Wno-macro-redefined",
++        "-DLOG_NDEBUG=0",
++    ],
+ }
+ 
+ // Static libraries required by other modules
+-- 
+2.17.1
+

@@ -3,7 +3,7 @@
 ```
     Verbose        2
     Devug          3
-------------------------------------------------    
+------------------------------------------------
     Info           4    <default log level>
     Warn           5
     Error          6
@@ -24,3 +24,5 @@
 ### reference
 
 - [ANDROID中C++层打开ALOGV打印的LOG开关 - 奔跑的蜗牛 - CSDN博客](https://blog.csdn.net/yu741677868yu/article/details/80682182)
+
+- [enable log of /system/bt](./ref/0001-DON-T-MERGE-debug-log-only-of-system-bt.patch)
