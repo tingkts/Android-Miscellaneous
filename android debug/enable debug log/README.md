@@ -28,11 +28,12 @@
 
 ## Reference
 
-◢ &nbsp; kernel
 
-  &nbsp; ╴ [Modify kernel log level to 8 in uboot](./ref/0001-Modify-log-level-to-8-uboot-pass-to-kernel)
+◤ &nbsp; kernel
 
-  &nbsp; ╴ [Modify kernel printk CONSOLE_LOGLEVEL_DEFAULT](./ref/kernel.printk.printk.c.diff)
+  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [Modify kernel log level to 8 in uboot](./ref/0001-Modify-log-level-to-8-uboot-pass-to-kernel)
+
+  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [Modify kernel printk CONSOLE_LOGLEVEL_DEFAULT](./ref/kernel.printk.printk.c.diff)
 
   ```
   root@zoey-gx05:~# cat /proc/sys/kernel/printk
@@ -40,10 +41,10 @@
 
   ```
 
-◢ &nbsp; native ALOGD, LOGD
+◤ &nbsp; native ALOGD, LOGD
 
-  &nbsp; ╴ [ANDROID中C++层打开ALOGV打印的LOG开关 - 奔跑的蜗牛 - CSDN博客](https://blog.csdn.net/yu741677868yu/article/details/80682182)
+  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [ANDROID中C++层打开ALOGV打印的LOG开关 - 奔跑的蜗牛 - CSDN博客](https://blog.csdn.net/yu741677868yu/article/details/80682182)
 
-  &nbsp; ╴ [enable log of /system/bt](./ref/0001-DON-T-MERGE-debug-log-only-of-system-bt.patch)
+  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [enable log of /system/bt](./ref/0001-DON-T-MERGE-debug-log-only-of-system-bt.patch)
 
-  &nbsp; ╴ [NDEBUG](http://aosp.opersys.com/xref/android-10.0.0_r47/search?q=NDEBUG&defs=&refs=&path=%22.+mk%22&hist=&type=&project=art&project=bionic&project=bootable&project=build&project=cts&project=dalvik&project=developers&project=development&project=device&project=external&project=frameworks&project=hardware&project=kernel&project=libcore&project=libnativehelper&project=packages&project=pdk&project=platform_testing&project=sdk&project=system&project=test&project=toolchain&project=tools)
+  &nbsp;&nbsp;&nbsp;&nbsp; ╴ [NDEBUG](http://aosp.opersys.com/xref/android-10.0.0_r47/search?q=NDEBUG&defs=&refs=&path=%22.+mk%22&hist=&type=&project=art&project=bionic&project=bootable&project=build&project=cts&project=dalvik&project=developers&project=development&project=device&project=external&project=frameworks&project=hardware&project=kernel&project=libcore&project=libnativehelper&project=packages&project=pdk&project=platform_testing&project=sdk&project=system&project=test&project=toolchain&project=tools)
