@@ -18,8 +18,8 @@
 
 |              |                                                     |
 |--------------|-----------------------------------------------------|
-| kernel       | 1). #define DEBUG <br/> 2). modify printk log level |
 | uboot        | #define DEBUG                                       |
+| kernel       | 1). #define DEBUG <br/> 2). modify printk log level |
 | native ALOGD | #define LOG_NDEBUG 0                                |
 
 
@@ -28,7 +28,19 @@
 
 ## Reference
 
-◢ &nbsp; ALOGD, LOGD
+◢ &nbsp; kernel
+
+  &nbsp; ╴ [Modify kernel log level to 8 in uboot](./ref/0001-Modify-log-level-to-8-uboot-pass-to-kernel)
+
+  &nbsp; ╴ [Modify kernel printk CONSOLE_LOGLEVEL_DEFAULT](./ref/kernel.printk.printk.c.diff)
+
+  ```
+  root@zoey-gx05:~# cat /proc/sys/kernel/printk
+  8 4 1 7
+
+  ```
+
+◢ &nbsp; native ALOGD, LOGD
 
   &nbsp; ╴ [ANDROID中C++层打开ALOGV打印的LOG开关 - 奔跑的蜗牛 - CSDN博客](https://blog.csdn.net/yu741677868yu/article/details/80682182)
 

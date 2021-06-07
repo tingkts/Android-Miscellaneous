@@ -1,0 +1,13 @@
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 2e2c86dd226f..e1e56da18fe4 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -60,7 +60,7 @@
+ #include "internal.h"
+ 
+ int console_printk[4] = {
+-	CONSOLE_LOGLEVEL_DEFAULT,	/* console_loglevel */
++	/*CONSOLE_LOGLEVEL_DEFAULT*/15,	/* console_loglevel */
+ 	MESSAGE_LOGLEVEL_DEFAULT,	/* default_message_loglevel */
+ 	CONSOLE_LOGLEVEL_MIN,		/* minimum_console_loglevel */
+ 	CONSOLE_LOGLEVEL_DEFAULT,	/* default_console_loglevel */

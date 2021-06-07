@@ -1,0 +1,37 @@
+From d55d1050d4944d921abcb0dcdbf96d0baa4afdc2 Mon Sep 17 00:00:00 2001
+From: zoey <zoey@gmail.com>
+Date: Wed, 2 Jun 2021 13:37:41 +0800
+Subject: [PATCH] Modify log level to 8
+
+Change-Id: Icd2ea7a5acd2f3e46937c6248a47c11fef1bb2b0
+---
+ arch/arm/lib/bootm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/lib/bootm.c b/arch/arm/lib/bootm.c
+index 1640307c..215482b7 100644
+--- a/arch/arm/lib/bootm.c
++++ b/arch/arm/lib/bootm.c
+@@ -36,6 +36,8 @@
+ #endif
+ #include <asm/setup.h>
+ 
++#define  LOG_LEVEL 8
++
+ DECLARE_GLOBAL_DATA_PTR;
+ 
+ static struct tag *params;
+@@ -239,6 +241,10 @@ __weak void board_prep_linux(bootm_headers_t *images) { }
+ static void boot_prep_linux(bootm_headers_t *images)
+ {
+ 	char *commandline = env_get("bootargs");
++	char newbootargs[512] = {0};
++
++	sprintf(newbootargs, " loglevel=%d", LOG_LEVEL);
++	strncat(commandline, newbootargs, sizeof(commandline) - strlen(commandline));
+ 
+ 	if (IMAGE_ENABLE_OF_LIBFDT && images->ft_len) {
+ #ifdef CONFIG_OF_LIBFDT
+-- 
+2.17.1
+
