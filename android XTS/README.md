@@ -111,6 +111,10 @@
 
   - CTS
     - run cts-camera
+        </br>▪ &nbsp; CtsCameraTestCases
+        </br>▪ &nbsp; CtsAppTestCases
+          </br> &emsp;&emsp; android.app.cts.SystemFeaturesTest#testCameraFeatures
+
     - CtsCameraApi25TestCases
     - CtsMediaTestCases
 
@@ -125,10 +129,10 @@
   - GTS
     - GtsCameraTestCases
     - GtsAssistantHostTestCases
-    
+
 
 <br>
 
-### Note: 
+### Note:
 
  - GTS and STS tool/source code are not open published, are limited by OEM/vendor private licensed.
