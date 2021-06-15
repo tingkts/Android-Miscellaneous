@@ -1,4 +1,4 @@
-§ &nbsp; build kernel
+§ &nbsp; Build kernel
 
 - [Linux Kernel - How to obtain a particular version (right upto SUBLEVEL)](https://stackoverflow.com/questions/28136815/linux-kernel-how-to-obtain-a-particular-version-right-upto-sublevel)
 
@@ -22,7 +22,7 @@ $ git checkout -b my3.18.1 v3.18.1
 
 </br>
 
-§ &nbsp; query kernel version
+§ &nbsp; Query kernel version
 
  &nbsp; ▹  &nbsp;  from kernel source &nbsp; [⥂](https://www.cnblogs.com/super119/archive/2010/12/11/1902942.html)
 
@@ -36,8 +36,22 @@ $ git checkout -b my3.18.1 v3.18.1
 </br>
 
 
-§ &nbsp; sample
+§ &nbsp; Sample
 
 - [Simple driver example for gpio pin control](./0001-example-simply-driver-of-gpio-pin-control.patch)
 
+
+</br>
+</br>
+
+-------
+
+</br>
+
+§ &nbsp; Feature list
+
+|       | feature |
+| :-----| :---- |
+| U-Boot | ▪&nbsp; function keys </br> &emsp; e.g. specific combined keys to enter recovery mode </br> ▪&nbsp; U-Boot logo|
+| Recovery | ▪&nbsp; OTA update through USB disk |
 
