@@ -33,12 +33,20 @@ $ git checkout -b my3.18.1 v3.18.1
 
  &nbsp;  &nbsp;  &nbsp; &nbsp; &nbsp; `uname -r`
 
-</br>
 
+
+</br>
+§ &nbsp; De-compile DTB </br></br>
+
+&emsp; ``dtc -I dtb ms5778-android-avb.dtb -O dts -o 123.dts``
+
+
+</br>
 
 § &nbsp; Sample
 
 - [Simple driver example for gpio pin control](./0001-example-simply-driver-of-gpio-pin-control.patch)
+
 
 
 </br>
@@ -46,7 +54,8 @@ $ git checkout -b my3.18.1 v3.18.1
 
 -------
 
-</br>
+
+
 
 § &nbsp; Feature list
 
