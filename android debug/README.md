@@ -13,13 +13,13 @@ Others :
 
 <br/>
 
-Temporarily disable SELinux for debugging only
+Disable SELinux
 
-  - [DON-T-MERGE-disable-sepolicy.patch](./DON-T-MERGE-disable-sepolicy.patch)
+  - append kernel command line, androidboot.selinux=permissive  &ensp;[ 🔗 ](./DON-T-MERGE-disable-sepolicy.patch)
 
 
 <br/>
 
 View system settings
 
-  - adb shell settings: &ensp;[ 🔗 ](https://adbinstaller.com/commands/adb-shell-settings-5b670d5ee7958178a2955536)
+  - adb shell settings  &ensp;[ 🔗 ](https://adbinstaller.com/commands/adb-shell-settings-5b670d5ee7958178a2955536)
