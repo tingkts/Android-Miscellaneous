@@ -216,12 +216,12 @@ static const struct fs_path_config android_dirs[] = {
     { 00750, AID_ROOT,         AID_SHELL,        0, "sbin" },
     { 00777, AID_ROOT,         AID_ROOT,         0, "sdcard" },
     { 00751, AID_ROOT,         AID_SDCARD_R,     0, "storage" },
-    { 00770, AID_ROOT,         AID_SHELL,        0, "system/bin/march_test_dir1" },
+    { 00770, AID_ROOT,         AID_SHELL,        0, "system/bin/mei_test_dir1" },
     { 00755, AID_ROOT,         AID_SHELL,        0, "system/bin" },
     { 00755, AID_ROOT,         AID_ROOT,         0, "system/etc/ppp" },
     { 00755, AID_ROOT,         AID_SHELL,        0, "system/vendor" },
     { 00755, AID_ROOT,         AID_SHELL,        0, "system/xbin" },
-    { 00777, AID_ROOT,         AID_ROOT,         0, "system/march_test_dir2" },
+    { 00777, AID_ROOT,         AID_ROOT,         0, "system/mei_test_dir2" },
     { 00755, AID_ROOT,         AID_SHELL,        0, "vendor" },
     { 00755, AID_ROOT,         AID_ROOT,         0, 0 },
     // clang-format on
@@ -296,9 +296,9 @@ static const struct fs_path_config android_files[] = {
     { 00750, AID_ROOT,      AID_SHELL,     0, "init*" },
     { 00755, AID_ROOT,      AID_SHELL,     0, "product/bin/*" },
     { 00750, AID_ROOT,      AID_SHELL,     0, "sbin/*" },
-    { 00444, AID_ROOT,      AID_SHELL,     0, "system/bin/march_test_file1" },
+    { 00444, AID_ROOT,      AID_SHELL,     0, "system/bin/mei_test_file1" },
     { 00444, AID_ROOT,      AID_ROOT,      0, 
-"system/bin/march_test_dir1/march_test_file2" },
+"system/bin/mei_test_dir1/mei_test_file2" },
     { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/*" },
     { 00755, AID_ROOT,      AID_ROOT,      0, "system/lib/valgrind/*" },
     { 00755, AID_ROOT,      AID_ROOT,      0, "system/lib64/valgrind/*" },
@@ -306,11 +306,11 @@ static const struct fs_path_config android_files[] = {
     { 00755, AID_ROOT,      AID_SHELL,     0, "vendor/bin/*" },
     { 00755, AID_ROOT,      AID_SHELL,     0, "vendor/xbin/*" },
     { 00444, AID_ROOT,      AID_ROOT,      0, 
-"system/march_test_dir2/march_test_file_a" },
+"system/mei_test_dir2/mei_test_file_a" },
     { 00666, AID_ROOT,      AID_SHELL,     0, 
-"system/march_test_dir2/march_test_file_b" },
+"system/mei_test_dir2/mei_test_file_b" },
     { 00777, AID_ROOT,      AID_LOG,       0, 
-"system/march_test_dir2/march_test_file_c" },
+"system/mei_test_dir2/mei_test_file_c" },
     { 00644, AID_ROOT,      AID_ROOT,      0, 0 },
     // clang-format on
 };
@@ -337,70 +337,70 @@ struct fs_path_config {
 檔案如下.
     { 00644, AID_ROOT,      AID_ROOT,      0, 0 },
 
-接下來看實例, 我加了 march_test_dir1/march_test_file2 及 march_test_file1 在 
+接下來看實例, 我加了 mei_test_dir1/mei_test_file2 及 mei_test_file1 在 
 system/bin, 他們在原始位置的權限如下
 
-drwx------  2 meimei meimei    4096 Aug  6 16:38 march_test_dir1
--r--r--r--  1 meimei meimei       0 Aug  6 16:10 march_test_file1
+drwx------  2 meimei meimei    4096 Aug  6 16:38 mei_test_dir1
+-r--r--r--  1 meimei meimei       0 Aug  6 16:10 mei_test_file1
 
-./march_test_dir1:
+./mei_test_dir1:
 total 16
 drwx------ 2 meimei meimei  4096 Aug  6 16:38 .
 drwxrwxr-x 4 meimei meimei 12288 Aug  6 17:19 ..
--rw-rw-r-- 1 meimei meimei     0 Aug  6 16:38 march_test_file2
+-rw-rw-r-- 1 meimei meimei     0 Aug  6 16:38 mei_test_file2
 
 套用上面改過的 table
-    { 00770, AID_ROOT,         AID_SHELL,        0, "system/bin/march_test_dir1" },
+    { 00770, AID_ROOT,         AID_SHELL,        0, "system/bin/mei_test_dir1" },
 
-    { 00444, AID_ROOT,      AID_SHELL,     0, "system/bin/march_test_file1" },
+    { 00444, AID_ROOT,      AID_SHELL,     0, "system/bin/mei_test_file1" },
     { 00444, AID_ROOT,      AID_ROOT,      0, 
-"system/bin/march_test_dir1/march_test_file2" },
+"system/bin/mei_test_dir1/mei_test_file2" },
 
 做成 system.img 後, 變成如下.
 
-drwxrwx---.  2 root            2000    4096 Aug  6 16:38 march_test_dir1
--r--r--r--.  1 root            2000       0 Aug  6 16:10 march_test_file1
+drwxrwx---.  2 root            2000    4096 Aug  6 16:38 mei_test_dir1
+-r--r--r--.  1 root            2000       0 Aug  6 16:10 mei_test_file1
 
-./march_test_dir1:
+./mei_test_dir1:
 total 12
 drwxrwx---. 2 root 2000 4096 Aug  6 16:38 .
 drwxr-xr-x. 4 root 2000 8192 Aug  6 17:19 ..
--r--r--r--. 1 root root    0 Aug  6 16:38 march_test_file2
+-r--r--r--. 1 root root    0 Aug  6 16:38 mei_test_file2
 
-另外, 我也增加了 march_test_dir2 目錄在 system 下, 並且內有 march_test_file_a, 
-march_test_file_b, march_test_file_c 三個檔案如下
+另外, 我也增加了 mei_test_dir2 目錄在 system 下, 並且內有 mei_test_file_a, 
+mei_test_file_b, mei_test_file_c 三個檔案如下
 
-drwx------  2 meimei meimei   4096 Aug  6 16:24 march_test_dir2
+drwx------  2 meimei meimei   4096 Aug  6 16:24 mei_test_dir2
 
-march_test_dir2/:
+mei_test_dir2/:
 total 8
 drwx------  2 meimei meimei 4096 Aug  6 16:24 .
 drwxrwxr-x 15 meimei meimei 4096 Aug  6 17:25 ..
--r--------  1 meimei meimei    0 Aug  6 16:24 march_test_file_a
--r--r-x---  1 meimei meimei    0 Aug  6 16:24 march_test_file_b
--r-----rwx  1 meimei meimei    0 Aug  6 16:24 march_test_file_c
+-r--------  1 meimei meimei    0 Aug  6 16:24 mei_test_file_a
+-r--r-x---  1 meimei meimei    0 Aug  6 16:24 mei_test_file_b
+-r-----rwx  1 meimei meimei    0 Aug  6 16:24 mei_test_file_c
 
 套用上面改過的 table
-    { 00777, AID_ROOT,         AID_ROOT,         0, "system/march_test_dir2" },
+    { 00777, AID_ROOT,         AID_ROOT,         0, "system/mei_test_dir2" },
 
     { 00444, AID_ROOT,      AID_ROOT,      0, 
-"system/march_test_dir2/march_test_file_a" },
+"system/mei_test_dir2/mei_test_file_a" },
     { 00666, AID_ROOT,      AID_SHELL,     0, 
-"system/march_test_dir2/march_test_file_b" },
+"system/mei_test_dir2/mei_test_file_b" },
     { 00777, AID_ROOT,      AID_LOG,       0, 
-"system/march_test_dir2/march_test_file_c" },
+"system/mei_test_dir2/mei_test_file_c" },
 
 做成 system.img 後, 變成如下.
 
-drwxrwxrwx.  2 root root   4096 Aug  6 16:24 march_test_dir2
+drwxrwxrwx.  2 root root   4096 Aug  6 16:24 mei_test_dir2
 
-march_test_dir2/:
+mei_test_dir2/:
 total 8
 drwxrwxrwx.  2 root root    4096 Aug  6 16:24 .
 drwxr-xr-x. 15 root root    4096 Aug  6 17:25 ..
--r--r--r--.  1 root root       0 Aug  6 16:24 march_test_file_a
--rw-rw-rw-.  1 root    2000    0 Aug  6 16:24 march_test_file_b
--rwxrwxrwx.  1 root ivanhsu    0 Aug  6 16:24 march_test_file_c
+-r--r--r--.  1 root root       0 Aug  6 16:24 mei_test_file_a
+-rw-rw-rw-.  1 root    2000    0 Aug  6 16:24 mei_test_file_b
+-rwxrwxrwx.  1 root ivanhsu    0 Aug  6 16:24 mei_test_file_c
 
 最後, 比對是採先比到雷同的就算完成, 所以順序很重要, 否則可能會不如預期. 例如, 
 放在 system/bin 內, 但是不想要 755, 就要放在 system/bin 前面, 不然你就要失望了.
