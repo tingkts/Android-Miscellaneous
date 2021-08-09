@@ -1,0 +1,406 @@
+寄件者:	mei
+寄件日期:	2021年8月9日星期一 上午 9:19
+收件者:	
+主旨:	新增目錄或檔案到 Android 的 image 中並依需求設定不同權限
+
+重要性:	高
+
+類別:	紅色類別
+
+Hi All,
+
+這個資訊是以 Android 9 system.img 為例
+
+當 android build system 在進行到 build system image 時, 會從 
+build/make/core/Makefile 中呼叫到 build-systemimage-target, 而它的定義如下,
+
+define build-systemimage-target
+  @echo "Target system fs image: $(1)"
+  $(call create-system-vendor-symlink)
+  $(call create-system-product-symlink)
+  @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf 
+$(systemimage_intermediates)/system_image_info.txt
+  $(call generate-userimage-prop-dictionary, 
+$(systemimage_intermediates)/system_image_info.txt, \
+      skip_fsck=true)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+      build/make/tools/releasetools/build_image.py \
+      $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) 
+$(TARGET_OUT) \
+      || ( echo "Out of space? the tree size of $(TARGET_OUT) is (MB): " 1>&2 ;\
+           du -sm $(TARGET_OUT) 1>&2;\
+           if [ "$(INTERNAL_USERIMAGES_EXT_VARIANT)" == "ext4" ]; then \
+               maxsize=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE); \
+               echo "The max is $$(( maxsize / 1048576 )) MB." 1>&2 ;\
+           else \
+               echo "The max is $$(( $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) / 1048576 )) 
+MB." 1>&2 ;\
+           fi; \
+           mkdir -p $(DIST_DIR); cp $(INSTALLED_FILES_FILE) 
+$(DIST_DIR)/installed-files-rescued.txt; \
+           exit 1 )
+endef
+
+這個會再進一步呼叫到 build/make/tools/releasetools/build_image.py, 它的 main 定
+義如下
+
+def main(argv):
+  if len(argv) != 4:
+    print(__doc__)
+    sys.exit(1)
+
+  in_dir = argv[0]
+  glob_dict_file = argv[1]
+  out_file = argv[2]
+  target_out = argv[3]
+  print("build_image.py in_dir = %s, glob_dict_file = %s, out_file = %s" %
+         (in_dir, glob_dict_file, out_file))
+
+  glob_dict = LoadGlobalDict(glob_dict_file)
+  if "mount_point" in glob_dict:
+    # The caller knows the mount point and provides a dictionay needed by
+    # BuildImage().
+    image_properties = glob_dict
+  else:
+    image_filename = os.path.basename(out_file)
+    mount_point = ""
+    if image_filename == "system.img":
+      mount_point = "system"
+    elif image_filename == "system_other.img":
+      mount_point = "system_other"
+    elif image_filename == "userdata.img":
+      mount_point = "data"
+    elif image_filename == "cache.img":
+      mount_point = "cache"
+    elif image_filename == "vendor.img":
+      mount_point = "vendor"
+    elif image_filename == "oem.img":
+      mount_point = "oem"
+    elif image_filename == "product.img":
+      mount_point = "product"
+    else:
+      print("error: unknown image file name ", image_filename, file=sys.stderr)
+      sys.exit(1)
+
+    image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
+
+  if not BuildImage(in_dir, image_properties, out_file, target_out):
+    print("error: failed to build %s from %s" % (out_file, in_dir),
+          file=sys.stderr)
+    sys.exit(1)
+
+然後又再度呼叫 BuildImage() -> RunCommand().
+打開 RunCommand() 的訊息後, 看到如下的指令以 out 下的 system 目錄來建立 
+system.img.
+
+Running: mkuserimg_mke2fs.sh -s /tmp/tmpVc5LFF 
+out-userdebug/target/product/ms5761p/obj/PACKAGING/systemimage_intermediates/
+system.img ext4 / 1849315328 -j 0 -D out-userdebug/target/product/ms5761p/system 
+-L / -M 0 
+out-userdebug/target/product/ms5761p/obj/ETC/file_contexts.bin_intermediates/file_
+contexts.bin 
+(看到 /tmp/tmpVc5LFF 這個目錄了嗎, 這是在做 system image 時的一個暫時目錄, 會
+先把 out-userdebug/target/product/ms5761p/system 的內容都複製到那個 
+/tmp/tmpVc5LFF 目錄中)
+
+而 mkuserimg_mke2fs.sh 這個 script 在 BSP 下的 system/extras/ext4_utils 目錄, 
+在被呼叫到時, 會執行 mke2fs 及 e2fsdroid 來完成真正的工作. 指令類似下方.
+
+MKE2FS_CONFIG=./system/extras/ext4_utils/mke2fs.conf mke2fs -O ^has_journal -L / 
+-m 0 -E android_sparse -t ext4 -b 4096 
+out-userdebug/target/product/ms5761p/obj/PACKAGING/systemimage_intermediates/
+system.img 451493 
+
+e2fsdroid -p out-userdebug/target/product/ms5761p/system -S 
+out-userdebug/target/product/ms5761p/obj/ETC/file_contexts.bin_intermediates/file_
+contexts.bin -f /tmp/tmpVc5LFF -a / 
+out-userdebug/target/product/ms5761p/obj/PACKAGING/systemimage_intermediates/
+system.img
+
+要注意, 這邊所執行的 mke2fs 及 e2fsdroid 是 build out 目錄中 host/linux-x86/bin 的
+執行檔. 不是 build server linux 環境下的. 
+
+mke2fs 的原始檔在 external/e2fsprogs/misc
+e2fsdroid 的原始檔在 external/e2fsprogs/contrib/android
+
+在此 mke2fs 所做事是建立一個空的 ext4 的 file system 的 image, 意思是它做好的 
+system.img 內只有 lost+found 目錄, 其他什麼都沒有
+
+而把 out-userdebug/target/product/ms5761p/system 這個目錄內的東西, 加進前面完
+成的空的 system.img 就是 e2fsdroid 的工作. 
+
+在 e2fsdroic.c 中, main()在處理參數後, 就呼叫 android_configure_fs()
+
+    if (android_configure) {
+        retval = android_configure_fs(fs, src_dir, product_out, mountpoint,
+            seopt_file, nr_opt, fs_config_file, fixed_time);
+        if (retval) {
+            com_err(prog_name, retval, "%s",
+                "while configuring the file system");
+            exit(1);
+        }
+    }
+
+這個之後就啟動一連串的作業, 掃描 /tmp/tmpVc5LFF 暫時目錄內的所有目錄及檔案, 
+一一加入到 system.img 這個 ext4 file system image 中.
+
+這裏有個問題, 也是我們要探討的, 我們如果仔細看一下 system(或 /tmp/tmpVc5LFF 
+暫時目錄)內的所有子目錄及檔案, owner/group 及 mode 都是我們在 build 的過程中
+使用的 username 及一些固定的 mode.
+舉列如下, 這是 system/bin 下的檔案, 所有的 owner/group 都是 meimei/meimei, 
+而且有些檔案沒有 executable(x) 樣限.
+
+lrwxrwxrwx  1 meimei meimei       6 Aug  6 17:18 sleep -> toybox
+-rwxrwxr-x  1 meimei meimei  122256 Aug  6 16:14 sload_f2fs
+-rwxrwxr-x  1 meimei meimei     207 Aug  6 14:01 sm
+lrwxrwxrwx  1 meimei meimei       6 Aug  6 17:18 sort -> toybox
+lrwxrwxrwx  1 meimei meimei       6 Aug  6 17:18 split -> toybox
+-rwxrwxr-x  1 meimei meimei  134392 Aug  6 14:21 sqlite3
+-rwxrwxr-x  1 meimei meimei   70208 Aug  6 14:01 ss
+lrwxrwxrwx  1 meimei meimei       6 Aug  6 17:18 start -> toybox
+-rw-rw-r--  1 meimei meimei    2580 Aug  6 14:01 startup-wwan_dhcptool.sh
+-rw-rw-r--  1 meimei meimei    2454 Aug  6 14:01 startup-wwan_v4v6.sh
+-rw-rw-r--  1 meimei meimei    2301 Aug  6 14:01 startup-wwan_v6.sh
+lrwxrwxrwx  1 meimei meimei       6 Aug  6 17:18 stat -> toybox
+-rwxrwxr-x  1 meimei meimei  431012 Aug  6 17:18 statsd
+lrwxrwxrwx  1 meimei meimei       6 Aug  6 17:18 stop -> toybox
+
+但是做好的 system.img 如果我們從新 mount 起來看, 會如下,
+
+lrwxr-xr-x.  1 root            2000       6 Aug  6 17:25 sleep -> toybox
+-rwxr-xr-x.  1 root            2000  122256 Aug  6 16:14 sload_f2fs
+-rwxr-xr-x.  1 root            2000     207 Aug  6 14:01 sm
+lrwxr-xr-x.  1 root            2000       6 Aug  6 17:25 sort -> toybox
+lrwxr-xr-x.  1 root            2000       6 Aug  6 17:25 split -> toybox
+-rwxr-xr-x.  1 root            2000  134392 Aug  6 14:21 sqlite3
+-rwxr-xr-x.  1 root            2000   70208 Aug  6 14:01 ss
+lrwxr-xr-x.  1 root            2000       6 Aug  6 17:25 start -> toybox
+-rwxr-xr-x.  1 root            2000    2580 Aug  6 14:01 startup-wwan_dhcptool.sh
+-rwxr-xr-x.  1 root            2000    2454 Aug  6 14:01 startup-wwan_v4v6.sh
+-rwxr-xr-x.  1 root            2000    2301 Aug  6 14:01 startup-wwan_v6.sh
+lrwxr-xr-x.  1 root            2000       6 Aug  6 17:25 stat -> toybox
+-rwxr-xr-x.  1 root            2000  431012 Aug  6 17:18 statsd
+lrwxr-xr-x.  1 root            2000       6 Aug  6 17:25 stop -> toybox
+
+檔案的 owner/group 變成 Android 內的 owner/group (root -> uid 0, shell -> uid 2000), 
+也都具有 executable(x) 權限.
+
+這主要是在打包每個 dir / file 到 system.img 去的時候, 會 callback 到一個 fs_config() 
+來處理這些事. 這個 fs_config() 在 system/core/libcutils, 會被做成 libcutils.so
+
+這個 fs_config.c 最前面, 有兩個大 table, 分別如下, 一個與目錄有關, 一個與檔案有
+關, 
+
+static const struct fs_path_config android_dirs[] = {
+    // clang-format off
+    { 00770, AID_SYSTEM,       AID_CACHE,        0, "cache" },
+    { 00555, AID_ROOT,         AID_ROOT,         0, "config" },
+    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app" },
+    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app-private" },
+    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app-ephemeral" },
+    { 00771, AID_ROOT,         AID_ROOT,         0, "data/dalvik-cache" },
+    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/data" },
+    { 00771, AID_SHELL,        AID_SHELL,        0, "data/local/tmp" },
+    { 00771, AID_SHELL,        AID_SHELL,        0, "data/local" },
+    { 00770, AID_DHCP,         AID_DHCP,         0, "data/misc/dhcp" },
+    { 00771, AID_SHARED_RELRO, AID_SHARED_RELRO, 0, "data/misc/shared_relro" },
+    { 01771, AID_SYSTEM,       AID_MISC,         0, "data/misc" },
+    { 00775, AID_MEDIA_RW,     AID_MEDIA_RW,     0, "data/media/Music" },
+    { 00775, AID_MEDIA_RW,     AID_MEDIA_RW,     0, "data/media" },
+    { 00750, AID_ROOT,         AID_SHELL,        0, "data/nativetest" },
+    { 00750, AID_ROOT,         AID_SHELL,        0, "data/nativetest64" },
+    { 00775, AID_ROOT,         AID_ROOT,         0, "data/preloads" },
+    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data" },
+    { 00755, AID_ROOT,         AID_SYSTEM,       0, "mnt" },
+    { 00755, AID_ROOT,         AID_SHELL,        0, "product/bin" },
+    { 00750, AID_ROOT,         AID_SHELL,        0, "sbin" },
+    { 00777, AID_ROOT,         AID_ROOT,         0, "sdcard" },
+    { 00751, AID_ROOT,         AID_SDCARD_R,     0, "storage" },
+    { 00770, AID_ROOT,         AID_SHELL,        0, "system/bin/march_test_dir1" },
+    { 00755, AID_ROOT,         AID_SHELL,        0, "system/bin" },
+    { 00755, AID_ROOT,         AID_ROOT,         0, "system/etc/ppp" },
+    { 00755, AID_ROOT,         AID_SHELL,        0, "system/vendor" },
+    { 00755, AID_ROOT,         AID_SHELL,        0, "system/xbin" },
+    { 00777, AID_ROOT,         AID_ROOT,         0, "system/march_test_dir2" },
+    { 00755, AID_ROOT,         AID_SHELL,        0, "vendor" },
+    { 00755, AID_ROOT,         AID_ROOT,         0, 0 },
+    // clang-format on
+};
+
+static const struct fs_path_config android_files[] = {
+    // clang-format off
+    { 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app/*" },
+    { 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app-ephemeral/*" },
+    { 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app-private/*" },
+    { 00644, AID_APP,       AID_APP,       0, "data/data/*" },
+    { 00644, AID_MEDIA_RW,  AID_MEDIA_RW,  0, "data/media/*" },
+    { 00640, AID_ROOT,      AID_SHELL,     0, "data/nativetest/tests.txt" },
+    { 00640, AID_ROOT,      AID_SHELL,     0, "data/nativetest64/tests.txt" },
+    { 00750, AID_ROOT,      AID_SHELL,     0, "data/nativetest/*" },
+    { 00750, AID_ROOT,      AID_SHELL,     0, "data/nativetest64/*" },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "default.prop" }, // legacy
+    { 00600, AID_ROOT,      AID_ROOT,      0, "system/etc/prop.default" },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "odm/build.prop" },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "odm/default.prop" },
+    { 00444, AID_ROOT,      AID_ROOT,      0, odm_conf_dir + 1 },
+    { 00444, AID_ROOT,      AID_ROOT,      0, odm_conf_file + 1 },
+    { 00444, AID_ROOT,      AID_ROOT,      0, oem_conf_dir + 1 },
+    { 00444, AID_ROOT,      AID_ROOT,      0, oem_conf_file + 1 },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "product/build.prop" },
+    { 00750, AID_ROOT,      AID_SHELL,     0, "sbin/fs_mgr" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/crash_dump32" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/crash_dump64" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/debuggerd" },
+    { 00750, AID_ROOT,      AID_ROOT,      0, "system/bin/install-recovery.sh" },
+    { 00700, AID_ROOT,      AID_ROOT,      0, "system/bin/secilc" },
+    { 00750, AID_ROOT,      AID_ROOT,      0, "system/bin/uncrypt" },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "system/build.prop" },
+    { 00444, AID_ROOT,      AID_ROOT,      0, sys_conf_dir + 1 },
+    { 00444, AID_ROOT,      AID_ROOT,      0, sys_conf_file + 1 },
+    { 00440, AID_ROOT,      AID_SHELL,     0, "system/etc/init.goldfish.rc" },
+    { 00550, AID_ROOT,      AID_SHELL,     0, "system/etc/init.goldfish.sh" },
+    { 00550, AID_ROOT,      AID_SHELL,     0, "system/etc/init.ril" },
+    { 00555, AID_ROOT,      AID_ROOT,      0, "system/etc/ppp/*" },
+    { 00555, AID_ROOT,      AID_ROOT,      0, "system/etc/rc.*" },
+    { 00440, AID_ROOT,      AID_ROOT,      0, "system/etc/recovery.img" },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "vendor/build.prop" },
+    { 00600, AID_ROOT,      AID_ROOT,      0, "vendor/default.prop" },
+    { 00444, AID_ROOT,      AID_ROOT,      0, ven_conf_dir + 1 },
+    { 00444, AID_ROOT,      AID_ROOT,      0, ven_conf_file + 1 },
+
+    // the following two files are INTENTIONALLY set-uid, but they
+    // are NOT included on user builds.
+    { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/procmem" },
+    { 04750, AID_ROOT,      AID_SHELL,     0, "system/xbin/su" },
+
+    // the following files have enhanced capabilities and ARE included
+    // in user builds.
+    { 00700, AID_SYSTEM,    AID_SHELL,     CAP_MASK_LONG(CAP_BLOCK_SUSPEND),
+                                              "system/bin/inputflinger" },
+    { 00550, AID_LOGD,      AID_LOGD,      CAP_MASK_LONG(CAP_SYSLOG) |
+                                           CAP_MASK_LONG(CAP_AUDIT_CONTROL) |
+                                           CAP_MASK_LONG(CAP_SETGID),
+                                              "system/bin/uogd" },
+    { 00550, AID_SYSTEM,    AID_LOG,      CAP_MASK_LONG(CAP_SYSLOG),
+                                              "system/bin/bootstat" },
+    { 00750, AID_ROOT,      AID_SHELL,     CAP_MASK_LONG(CAP_SETUID) |
+                                           CAP_MASK_LONG(CAP_SETGID),
+                                              "system/bin/run-as" },
+
+    // Support FIFO scheduling mode in SurfaceFlinger.
+    { 00755, AID_SYSTEM,    AID_GRAPHICS,  CAP_MASK_LONG(CAP_SYS_NICE),
+                                              "system/bin/surfaceflinger" },
+    // generic defaults
+    { 00755, AID_ROOT,      AID_ROOT,      0, "bin/*" },
+    { 00640, AID_ROOT,      AID_SHELL,     0, "fstab.*" },
+    { 00750, AID_ROOT,      AID_SHELL,     0, "init*" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "product/bin/*" },
+    { 00750, AID_ROOT,      AID_SHELL,     0, "sbin/*" },
+    { 00444, AID_ROOT,      AID_SHELL,     0, "system/bin/march_test_file1" },
+    { 00444, AID_ROOT,      AID_ROOT,      0, 
+"system/bin/march_test_dir1/march_test_file2" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/*" },
+    { 00755, AID_ROOT,      AID_ROOT,      0, "system/lib/valgrind/*" },
+    { 00755, AID_ROOT,      AID_ROOT,      0, "system/lib64/valgrind/*" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "system/xbin/*" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "vendor/bin/*" },
+    { 00755, AID_ROOT,      AID_SHELL,     0, "vendor/xbin/*" },
+    { 00444, AID_ROOT,      AID_ROOT,      0, 
+"system/march_test_dir2/march_test_file_a" },
+    { 00666, AID_ROOT,      AID_SHELL,     0, 
+"system/march_test_dir2/march_test_file_b" },
+    { 00777, AID_ROOT,      AID_LOG,       0, 
+"system/march_test_dir2/march_test_file_c" },
+    { 00644, AID_ROOT,      AID_ROOT,      0, 0 },
+    // clang-format on
+};
+
+這兩個 table 的結構如下, 
+
+struct fs_path_config {
+    unsigned mode;
+    unsigned uid;
+    unsigned gid;
+    uint64_t capabilities;
+    const char* prefix;
+};
+
+處理每個 dir / file 時, 都會被 callback 回來, 依最後一個 prefix 來比對, 然後給予應有
+的 mode, uid, gid 及 cap.
+
+所以我們在 BSP 內, 因為需求, 而新增加一些目錄/檔案要 build 到 system image 時, 
+如果沒有在此比對到, 就會使用最後一個做為它們的權限
+
+目錄就如下, 
+    { 00755, AID_ROOT,         AID_ROOT,         0, 0 },
+
+檔案如下.
+    { 00644, AID_ROOT,      AID_ROOT,      0, 0 },
+
+接下來看實例, 我加了 march_test_dir1/march_test_file2 及 march_test_file1 在 
+system/bin, 他們在原始位置的權限如下
+
+drwx------  2 meimei meimei    4096 Aug  6 16:38 march_test_dir1
+-r--r--r--  1 meimei meimei       0 Aug  6 16:10 march_test_file1
+
+./march_test_dir1:
+total 16
+drwx------ 2 meimei meimei  4096 Aug  6 16:38 .
+drwxrwxr-x 4 meimei meimei 12288 Aug  6 17:19 ..
+-rw-rw-r-- 1 meimei meimei     0 Aug  6 16:38 march_test_file2
+
+套用上面改過的 table
+    { 00770, AID_ROOT,         AID_SHELL,        0, "system/bin/march_test_dir1" },
+
+    { 00444, AID_ROOT,      AID_SHELL,     0, "system/bin/march_test_file1" },
+    { 00444, AID_ROOT,      AID_ROOT,      0, 
+"system/bin/march_test_dir1/march_test_file2" },
+
+做成 system.img 後, 變成如下.
+
+drwxrwx---.  2 root            2000    4096 Aug  6 16:38 march_test_dir1
+-r--r--r--.  1 root            2000       0 Aug  6 16:10 march_test_file1
+
+./march_test_dir1:
+total 12
+drwxrwx---. 2 root 2000 4096 Aug  6 16:38 .
+drwxr-xr-x. 4 root 2000 8192 Aug  6 17:19 ..
+-r--r--r--. 1 root root    0 Aug  6 16:38 march_test_file2
+
+另外, 我也增加了 march_test_dir2 目錄在 system 下, 並且內有 march_test_file_a, 
+march_test_file_b, march_test_file_c 三個檔案如下
+
+drwx------  2 meimei meimei   4096 Aug  6 16:24 march_test_dir2
+
+march_test_dir2/:
+total 8
+drwx------  2 meimei meimei 4096 Aug  6 16:24 .
+drwxrwxr-x 15 meimei meimei 4096 Aug  6 17:25 ..
+-r--------  1 meimei meimei    0 Aug  6 16:24 march_test_file_a
+-r--r-x---  1 meimei meimei    0 Aug  6 16:24 march_test_file_b
+-r-----rwx  1 meimei meimei    0 Aug  6 16:24 march_test_file_c
+
+套用上面改過的 table
+    { 00777, AID_ROOT,         AID_ROOT,         0, "system/march_test_dir2" },
+
+    { 00444, AID_ROOT,      AID_ROOT,      0, 
+"system/march_test_dir2/march_test_file_a" },
+    { 00666, AID_ROOT,      AID_SHELL,     0, 
+"system/march_test_dir2/march_test_file_b" },
+    { 00777, AID_ROOT,      AID_LOG,       0, 
+"system/march_test_dir2/march_test_file_c" },
+
+做成 system.img 後, 變成如下.
+
+drwxrwxrwx.  2 root root   4096 Aug  6 16:24 march_test_dir2
+
+march_test_dir2/:
+total 8
+drwxrwxrwx.  2 root root    4096 Aug  6 16:24 .
+drwxr-xr-x. 15 root root    4096 Aug  6 17:25 ..
+-r--r--r--.  1 root root       0 Aug  6 16:24 march_test_file_a
+-rw-rw-rw-.  1 root    2000    0 Aug  6 16:24 march_test_file_b
+-rwxrwxrwx.  1 root ivanhsu    0 Aug  6 16:24 march_test_file_c
+
+最後, 比對是採先比到雷同的就算完成, 所以順序很重要, 否則可能會不如預期. 例如, 
+放在 system/bin 內, 但是不想要 755, 就要放在 system/bin 前面, 不然你就要失望了.
