@@ -10,23 +10,26 @@ ting@ting:/media/ting/Data-AOSP/AOSP/android-11/aosp$ source build/envsetup.sh ;
 ```
 
 
-- aosp/frameworks/base/services/core
+- e.g. "aosp/frameworks/base/services/core" , "aosp/frameworks/base/core/java"
 
-```
+```shell
+    # aosp/frameworks/base/services/core
+    cd aosp/frameworks/base/services/core
     aidegen -i s -p /media/ting/Data-IDE/IDE/android-ide/android-studio/new-2021.09.03/android-studio-2020.3.1.24-linux/android-studio/bin
 ```
 
-
-- aosp/frameworks/base/core/java
-
-```
+```shell
+    # aosp/frameworks/base/core/java
+    cd aosp/frameworks/base/core/java
     aidegen -i s -p /media/ting/Data-IDE/IDE/android-ide/android-studio/new-2021.09.03/android-studio-2020.3.1.24-linux/android-studio/bin
 ```
 
 </br>
 </br>
 
-```
+Help manual :
+
+```shell
 ting@ting:/media/ting/Data-AOSP/AOSP/android-11/aosp$ aidegen --help
 usage: aidegen [module_name1 module_name2... project_path1 project_path2...]
 
