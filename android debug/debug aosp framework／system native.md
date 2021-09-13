@@ -24,6 +24,8 @@
     Exiting
 ```
 
+&ensp;➥ &nbsp;Use `gdbclient.py -n system_server --setup-forwarding gdb --no-lldb` instead.
+
 
 </br>
 </br>
