@@ -10,7 +10,10 @@ ting@ting:/media/ting/Data-AOSP/AOSP/android-11/aosp$ source build/envsetup.sh ;
 ```
 
 
-- e.g. "aosp/frameworks/base/services/core" , "aosp/frameworks/base/core/java"
+- Java &nbsp; - &nbsp; [Android Studio](https://developer.android.com/studio)
+    - "android-11/aosp/frameworks/base/services/core"
+    - "android-11/aosp/frameworks/base/core/java"
+    - "android-11/aosp/frameworks/opt/telephony"
 
 ```shell
     # aosp/frameworks/base/services/core
@@ -18,11 +21,18 @@ ting@ting:/media/ting/Data-AOSP/AOSP/android-11/aosp$ source build/envsetup.sh ;
     aidegen -i s -p /media/ting/Data-IDE/IDE/android-ide/android-studio/new-2021.09.03/android-studio-2020.3.1.24-linux/android-studio/bin
 ```
 
+- C/C++ &nbsp; - &nbsp; [VSCode](https://code.visualstudio.com/) or [CLion](https://www.jetbrains.com/clion/) &nbsp;&nbsp;&nbsp;&nbsp;[➥ CLion project generator](https://cs.android.com/android/platform/superproject/+/android-11.0.0_r40:build/soong/docs/clion.md)
+  - "android-11/aosp/frameworks/native"
+
 ```shell
-    # aosp/frameworks/base/core/java
-    cd aosp/frameworks/base/core/java
-    aidegen -i s -p /media/ting/Data-IDE/IDE/android-ide/android-studio/new-2021.09.03/android-studio-2020.3.1.24-linux/android-studio/bin
+    # vs code
+    cd android-11/aosp/frameworks/native
+    aidegen -p /usr/bin/code -v -i v
+
+    # clion
+    aidegen -p /media/ting/Data-IDE/IDE/clion/clion-2021.2.1/bin/clion.sh -v -i c
 ```
+
 
 </br>
 </br>
