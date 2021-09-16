@@ -14,6 +14,10 @@ stack unwinder : parse frame of native stack trace (call stack)
 
 #### [Using Debuggers](https://source.android.com/devices/tech/debug/gdb)
 
+</br>
+
+android 11 </br>
+{
 -  Using `gdbclient.py` which directly setup both local desktop and remote android ready for lldb or gdb debugging.
 
 ```shell
@@ -40,6 +44,11 @@ stack unwinder : parse frame of native stack trace (call stack)
 
 &ensp;➥ &nbsp;Use `gdbclient.py -n system_server --setup-forwarding gdb --no-lldb` instead.
 
+</br>
+
+⚠️⁉️ &nbsp;Android 11 can only start lldb, gdb failed!
+
+}
 
 
 
