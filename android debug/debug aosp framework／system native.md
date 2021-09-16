@@ -1,4 +1,18 @@
-[AOSP](https://source.android.com/) &nbsp;: &nbsp;[Using Debuggers](https://source.android.com/devices/tech/debug/gdb)
+
+### [Debugging Native Android Platform Code ](https://source.android.com/devices/tech/debug)
+
+stack unwinder : parse frame of native stack trace (call stack)
+```
+    ≥ android 8  crashdump32/64
+    ≤ android 7  debuggerd
+
+```
+
+
+
+</br>
+
+#### [Using Debuggers](https://source.android.com/devices/tech/debug/gdb)
 
 -  Using `gdbclient.py` which directly setup both local desktop and remote android ready for lldb or gdb debugging.
 
@@ -27,13 +41,21 @@
 &ensp;➥ &nbsp;Use `gdbclient.py -n system_server --setup-forwarding gdb --no-lldb` instead.
 
 
+
+
+
+
+
 </br>
 </br>
 </br>
 
 ------
 
-readelf -s *.so
+</br>
+
+`readelf -s *.so`&ensp;:&ensp;info of stripped or unstripped binary&emsp;[➚](https://stackoverflow.com/questions/22682151/difference-between-a-stripped-binary-and-a-non-stripped-binary-in-linux)
+
 
 ```shell
     generic_x86_64:/ # readelf --help
