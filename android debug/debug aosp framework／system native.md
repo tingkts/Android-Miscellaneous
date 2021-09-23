@@ -63,7 +63,7 @@ __Actually trial__ ：
 | aosp 10 |                  |                   failed !?                   |               ✓               |              |             |
 | aosp 9  |       n/a        |                      n/a                      |               ✓               |   only gdb   |  failed !?  |
 
-*1 ： `acloud create --local-image --local-instance`&ensp;&ensp;[↗](https://source.android.com/setup/start#create_acloud_instance)
+*1 ： `acloud create --local-image --local-instance`&ensp;&ensp;[➚](https://source.android.com/setup/start#create_acloud_instance)
 
 </br>
 </br>
