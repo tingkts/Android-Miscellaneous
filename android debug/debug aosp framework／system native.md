@@ -50,10 +50,20 @@ android 11 </br>
 
 }
 
+</br>
+</br>
 
+__Actually trial__ ：
 
+</br>
 
+|         | acloud &ensp; *1 | emulator </br> aosp_cf_x86_64_phone-userdebug | emulator </br> aosp_x86_64-eng | gdbclient.py | gdbserver64 |
+| ------- | :--------------: | :-------------------------------------------: | :----------------------------: | :----------: | :---------: |
+| aosp 11 |    failed !?     |                   failed !?                   |               ✓               |  only lldb   |  failed !?  |
+| aosp 10 |                  |                   failed !?                   |               ✓               |              |             |
+| aosp 9  |       n/a        |                      n/a                      |               ✓               |   only gdb   |  failed !?  |
 
+*1 ： `acloud create --local-image --local-instance`&ensp;&ensp;[↗](https://source.android.com/setup/start#create_acloud_instance)
 
 </br>
 </br>
