@@ -57,13 +57,38 @@ __Actually trial__ ：
 
 </br>
 
-|         | acloud &ensp; *1 | emulator </br> aosp_cf_x86_64_phone-userdebug | emulator </br> aosp_x86_64-eng | gdbclient.py | gdbserver64 |
-| ------- | :--------------: | :-------------------------------------------: | :----------------------------: | :----------: | :---------: |
-| aosp 11 |    failed !?     |                   failed !?                   |               ✓               |  only lldb   |  failed !?  |
-| aosp 10 |                  |                   failed !?                   |               ✓               |              |             |
-| aosp 9  |       n/a        |                      n/a                      |               ✓               |   only gdb   |  failed !?  |
+|                            | acloud &ensp; *1 | emulator </br> aosp_cf_x86_64_phone-userdebug | emulator </br> aosp_x86_64-eng | gdbclient.py | gdbserver64 &ensp; *2 |
+| -------------------------- | :--------------: | :-------------------------------------------: | :----------------------------: | :----------: | :-------------------: |
+| android-11.0.0_r45         |    failed !?     |                    failed!                    |               ✓               |  only lldb   |  failed!  &ensp; *3   |
+| android-10.0.0_r47         |                  |                    failed!                    |               ✓               |   only gdb   |          ✓           |
+| android-security-9.0.0_r72 |       n/a        |                      n/a                      |               ✓               |   only gdb   |          ✓           |
 
 *1 ： `acloud create --local-image --local-instance`&ensp;&ensp;[➚](https://source.android.com/setup/start#create_acloud_instance)
+
+*2 ： e.g. : `generic_x86_64:/ # gdbserver64 :12233 --attach 1721`
+
+
+        ting@ting:/media/ting/Data-AOSP-3/android-9$ adb shell
+        adb server version (41) doesn't match this client (40); killing...
+        * daemon started successfully
+        generic_x86_64:/ # pidof system_server
+        1840
+        generic_x86_64:/ # gdb
+        gdbserver    gdbserver64
+        generic_x86_64:/ # gdbserver64 :12233 --attach 1840
+        Attached; pid = 1840
+        Listening on port 12233
+
+*3 ： Error message :
+
+```
+    generic_x86_64:/ # gdbserver64 :12055  --attach 654
+    /bin/sh: 654: inaccessible or not found
+    During startup program exited with code 127.
+    Exiting
+```
+
+
 
 </br>
 </br>
