@@ -41,4 +41,4 @@ Cross Compiler :
 
 Notice :
 
-- [ccache is no longer recommended !](https://stackoverflow.com/questions/59811821/how-to-use-ccache-to-speed-up-compiling-of-aosp)
+- [ccache is no longer recommended.](https://stackoverflow.com/questions/59811821/how-to-use-ccache-to-speed-up-compiling-of-aosp)
