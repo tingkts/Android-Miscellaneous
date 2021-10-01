@@ -34,3 +34,11 @@ Cross Compiler :
 |  ----  | ----  | --- |
 | ≤ android 7  | [GNU Make](https://www.gnu.org/software/make/) | gcc / gdb|
 | ≥ android 8  | [Soong build system](https://android.googlesource.com/platform/build/soong/+/refs/heads/master/README.md) | clang, llvm / lldb |
+
+
+</br>
+</br>
+
+Notice :
+
+- [ccache is no longer recommended !](https://stackoverflow.com/questions/59811821/how-to-use-ccache-to-speed-up-compiling-of-aosp)
