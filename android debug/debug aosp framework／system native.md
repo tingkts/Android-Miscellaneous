@@ -59,8 +59,8 @@ __Actually trial__ ：
 
 |                            | acloud &ensp; *1 | emulator </br> aosp_cf_x86_64_phone-userdebug | emulator </br> aosp_x86_64-eng | gdbclient.py | gdbserver64 &ensp; *2 |
 | -------------------------- | :--------------: | :-------------------------------------------: | :----------------------------: | :----------: | :-------------------: |
-| android-11.0.0_r45         |    failed !?     |                    failed!                    |               ✓               |  only lldb   |  failed!  &ensp; *3   |
-| android-10.0.0_r47         |                  |                    failed!                    |               ✓               |   only gdb   |          ✓           |
+| android-11.0.0_r45         |     failed!      |                    failed!                    |               ✓               |  only lldb   |  failed!  &ensp; *3   |
+| android-10.0.0_r47         |     failed!      |                    failed!                    |               ✓               |   only gdb   |          ✓           |
 | android-security-9.0.0_r72 |       n/a        |                      n/a                      |               ✓               |   only gdb   |          ✓           |
 
 *1 ： `acloud create --local-image --local-instance`&ensp;&ensp;[➚](https://source.android.com/setup/start#create_acloud_instance)
