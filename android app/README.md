@@ -1,6 +1,10 @@
-☛  &nbsp;  [Android app development kti](https://github.com/tingkts/Android-Miscellaneous/blob/main/android%20app/Android%20app%20development%20kit.md)
+__Android app development__
+
+☛  &nbsp;  [Popular dev. kit](Popular%20dev.%20kit.md)
 
 
-☛  &nbsp;  [Android app development reference sample](TODO)
+☛  &nbsp;  [Reference example](./Reference%20example.md)
 
+
+☛  &nbsp;  [Unusual use case](./Unusual%20use%20case.md)
 
