@@ -1,1 +1,1 @@
-🔖 [navigationbar - How to disable naviagation bar in Android LockScreen App like CM locker and OS8 lock screen - Stack Overflow](https://stackoverflow.com/questions/32948604/how-to-disable-naviagation-bar-in-android-lockscreen-app-like-cm-locker-and-os8/32983295#32983295)
+📝 [navigationbar - How to disable naviagation bar in Android LockScreen App like CM locker and OS8 lock screen - Stack Overflow](https://stackoverflow.com/questions/32948604/how-to-disable-naviagation-bar-in-android-lockscreen-app-like-cm-locker-and-os8/32983295#32983295)
