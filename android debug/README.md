@@ -6,6 +6,10 @@ Others :
 
  <br/>
 
+---
+
+ <br/>
+
 Set kernel logging LEVEL (1-9)
 
   - dmesg -n 1
@@ -13,9 +17,17 @@ Set kernel logging LEVEL (1-9)
 
 <br/>
 
+---
+
+<br/>
+
 Disable SELinux
 
   - append kernel command line, androidboot.selinux=permissive  &ensp;[ 🔗 ](./DON-T-MERGE-disable-sepolicy.patch)
+
+<br/>
+
+---
 
 
 <br/>
@@ -24,6 +36,9 @@ View system settings
 
   - adb shell settings  &ensp;[ 🔗 ](https://adbinstaller.com/commands/adb-shell-settings-5b670d5ee7958178a2955536)
 
+<br/>
+
+---
 
 
 <br/>
@@ -34,3 +49,5 @@ Restart zygote
   setprop ctl.start zygote
   setprop ctl.stop zygote
   ```
+
+---
