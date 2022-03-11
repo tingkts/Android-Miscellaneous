@@ -64,3 +64,35 @@ $ git checkout -b my3.18.1 v3.18.1
 | U-Boot | ▪&nbsp; function keys </br> &emsp; e.g. specific combined keys to enter recovery mode </br> ▪&nbsp; U-Boot logo|
 | Recovery | ▪&nbsp; OTA update through USB disk |
 
+
+
+</br>
+</br>
+
+-------
+
+§ GPIO export
+
+- add `CONFIG_GPIO_SYSFS=y` in kernel defconfig file.
+  ```
+  CONFIG_GPIO_SYSFS=y
+  ```
+- console commands :
+
+  ```
+	cd /sys/class/gpio
+	echo 125 > export
+
+    # check direction, input or output
+    cat direction
+
+    # check value, low 0 or high 1
+    cd gpio125
+	cat value
+	echo 0 > value
+	cat value 		// check if value changed to 0
+
+    echo 125 > unexport
+  ```
+
+
