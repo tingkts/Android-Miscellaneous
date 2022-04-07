@@ -14,3 +14,14 @@
 <br/>
 
 ↬ &nbsp; [Linux Error Number Table (errno)](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/errnos.md)
+
+
+
+-----
+
+</br>
+
+↬ &nbsp; repo tips :  
+```
+repo forall -j 36 -r bsp/hardware/* -c git log -p | grep "some_words" -B 1 -A 5
+```
