@@ -79,7 +79,7 @@ Interrupt pin：
 &emsp; ⁍ &nbsp;`GPIO` api
 
 ```
-    //Touch Panel
+    // Touch Panel
     gt9xx_ts@14 {
         compatible = "goodix,gt9xx";
         reg = <0x14>;
