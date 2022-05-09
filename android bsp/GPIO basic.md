@@ -29,27 +29,27 @@ Power pin：
 		regulator-max-microvolt = <3300000>;
 		gpio = <&gpio4 27 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
-        regulator-always-on;
+		regulator-always-on;
 	};
 ```
 
 &emsp; ⁍ &nbsp;`GPIO` api
 ```
 	//Touch Panel
-    gt9xx_ts@14 {
-        compatible = "goodix,gt9xx";
-        reg = <0x14>;
-        goodix,auto-update = <0>;
-        goodix,driver-send-cfg = <1>;
-        touchscreen-size-x = <4096>;
-        touchscreen-size-y = <4096>;
-        interrupt-parent = <&gpio1>;
-        interrupts = <1 0>;
-        pwr-gpios = <&gpio1 0 0>;   /* active high: */
-        int-gpios = <&gpio1 1 1>;   /* active low: */
-        rst-gpios = <&gpio4 14 1>;   /* active low: */    // power pin
-        // ...
-    };
+        gt9xx_ts@14 {
+            compatible = "goodix,gt9xx";
+            reg = <0x14>;
+            goodix,auto-update = <0>;
+            goodix,driver-send-cfg = <1>;
+            touchscreen-size-x = <4096>;
+            touchscreen-size-y = <4096>;
+            interrupt-parent = <&gpio1>;
+            interrupts = <1 0>;
+            pwr-gpios = <&gpio1 0 0>;   /* active high: */
+            int-gpios = <&gpio1 1 1>;   /* active low: */
+            rst-gpios = <&gpio4 14 1>;   /* active low: */    // power pin
+            // ...
+        };
 ```
 
 </br>
@@ -79,7 +79,7 @@ Interrupt pin：
 &emsp; ⁍ &nbsp;`GPIO` api
 
 ```
-	//Touch Panel
+    //Touch Panel
     gt9xx_ts@14 {
         compatible = "goodix,gt9xx";
         reg = <0x14>;
