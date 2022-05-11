@@ -71,7 +71,7 @@ $ git checkout -b my3.18.1 v3.18.1
 
 -------
 
-§ GPIO export
+§ &nbsp; GPIO export
 
 - add `CONFIG_GPIO_SYSFS=y` in kernel defconfig file.
   ```
@@ -96,3 +96,12 @@ $ git checkout -b my3.18.1 v3.18.1
   ```
 
 
+  ⥂ &nbsp; [GPIO Basic](./GPIO%20basic.md)
+
+  ⥂ &nbsp; [GPIO debug tip](./GPIO%20debug%20tip.md)
+
+
+</br>
+</br>
+
+-------
